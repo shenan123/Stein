@@ -1,0 +1,58 @@
+#线性、分段线性、非线性点运算
+
+import cv2
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+import random
+
+def linear_transmation(img,c,d):
+    img1=img.copy()
+    max=img1.max()
+    min=img1.min()
+    if max==min:
+        return np.uint8(img1)
+    for i in range (img1.shape[0]):
+        for j in range (img1.shape[1]):
+            img1[i,j]=((d-c)/(max-min))*(img1[i,j]-min)+c
+    return np.uint8(img1)
+def subsection_transmation(img,a,b,c,d,M):
+    img1=img.copy()
+    max=img1.max()
+    for i in range (img1.shape[0]):
+        for j in range (img1.shape[1]):
+            if img1[i,j]<=a:
+                img1[i,j]=img1[i,j]*(c/a)
+                continue
+            if img1[i,j]<=b & img1[i,j]>a:
+                img1[i,j]=(img1[i,j]-a)*((d-c)/(b-a))+c
+                continue
+            if img1[i,j]<=max:
+                img1[i,j]=((M-d)/(max-b))*(img1[i,j]-b)+d
+                continue
+    return np.uint8(img1)
+def power_low_transmation(img,gamma,c):
+    img1=np.zeros([img.shape[0],img.shape[1]])
+    for i in range (img.shape[0]):
+        for j in range (img.shape[1]):
+            img1[i,j]=c*255.0*(img[i,j]/255.0)**gamma
+    return np.uint8(img1)
+
+img=cv2.imread(r'lina.png',0)
+img1=linear_transmation(img,125,225)
+img2=subsection_transmation(img,125,225,100,200,255)
+img3=power_low_transmation(img,0.25,1.25)
+plt.figure()
+plt.subplot(1,4,1)
+plt.imshow(img,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.title('Initial image')
+plt.subplot(1,4,2)
+plt.imshow(img1,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.title('linear_transmation')
+plt.subplot(1,4,3)
+plt.imshow(img2,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.title('subsection_transmation')
+plt.subplot(1,4,4)
+plt.imshow(img2,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.title('power_low_transmation')
+plt.show()
