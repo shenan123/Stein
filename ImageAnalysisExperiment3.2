@@ -1,0 +1,54 @@
+#平移、镜像、旋转
+import cv2
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+import random
+
+def move(img,dx=50,dy=50):
+    rows=img.shape[0]
+    cols=img.shape[1]
+    M=np.float32([[1,0,dx],[0,1,dy],[0,0,1]])
+    dst=cv2.warpPerspective(img,M,(cols,rows))
+    return np.uint8(dst)
+def mirror_flip(img,t=0):
+    w=img.shape[0]
+    h=img.shape[1]
+    img1=np.zeros([img.shape[0],img.shape[1]],np.uint8)
+    if t==0:
+        for i in range(0,w):
+            for j in range(0,h):
+                k=w-1-i
+                img1[i,j]=img[k,j]
+        return img1
+    if t==1:
+        for i in range (0,w):
+            for j in range (0,h):
+                k=h-1-j
+                img1[i,j]=img[i,k]
+        return img1
+def rotate(img,angel=45):
+    rows=img.shape[0]
+    cols=img.shape[1]
+    M=cv2.getRotationMatrix2D((cols/2,rows/2),angel,1)
+    dst=cv2.warpAffine(img,M,(cols,rows))
+    return np.uint8(dst)
+
+
+img=cv2.imread(r'linda.png',0)
+img1=move(img)
+img2=mirror_flip(img)
+img3=rotate(img)
+img4=move(rotate(mirror_flip(img)))
+plt.figure()
+plt.subplot(1,5,1)
+plt.imshow(img,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.subplot(1,5,2)
+plt.imshow(img1,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.subplot(1,5,3)
+plt.imshow(img2,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.subplot(1,5,4)
+plt.imshow(img3,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.subplot(1,5,5)
+plt.imshow(img4,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.show()

@@ -1,0 +1,33 @@
+#傅里叶反变换
+import cv2
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+import random
+
+img=cv2.imread(r'lina.png',0)
+img1=np.fft.fft2(img)
+R=np.real(img1)
+img2=np.fft.ifft2(R)
+print(img2[25][25])
+img3=np.uint8(img2)
+dst=np.fft.fftshift(img1)
+img4=np.fft.ifft2(dst)
+angle0=np.angle(img1)
+A=20000
+img5=A*(np.e**(angle0*1j))
+img6=np.uint8(np.abs(img5))
+plt.figure()
+plt.subplot(1,4,1)
+plt.imshow(img,vmin=0,vmax=255,cmap=plt.cm.gray)
+plt.title('Iintial Image')
+plt.subplot(1,4,2)
+plt.imshow(img3,cmap='gray')#相位为0
+plt.title('相位为0')
+plt.subplot(1,4,3)
+plt.imshow(img4,cmap='gray')
+plt.title('傅里叶反变换')
+plt.subplot(1,4,4)
+plt.imshow(img6,cmap='gray')
+plt.title('幅值为A')
+plt.show()
